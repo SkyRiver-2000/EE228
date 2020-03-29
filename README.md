@@ -1,5 +1,4 @@
 # EE228: Machine Learning(AI)
-
 ## Introduction
 Code for curriculum EE228 for SJTU. Regularly Updated.  
 

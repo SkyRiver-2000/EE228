@@ -1,8 +1,8 @@
 # EE228: Machine Learning(AI)
 
-###Code for curriculum EE228 for SJTU. Regularly Updated.  
+### Code for curriculum EE228 for SJTU. Regularly Updated.  
 
-##Related Information  
+## Related Information  
 Developer: Zhou Ruiwen  
 WeChat: River0966  
 E-mail: zrw2000917@163.com  

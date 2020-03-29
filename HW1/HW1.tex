@@ -1,0 +1,108 @@
+%-- coding: UTF-8 --
+
+\documentclass[12pt]{article}
+
+\title{Homework 01}
+
+\usepackage{indentfirst}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsthm}
+\usepackage[ruled]{algorithm2e}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\usepackage[UTF8]{ctex}
+\usepackage{txfonts}
+\usepackage{bm}
+\geometry{top=2cm,left=2cm,right=2cm,bottom=2cm}
+\date{\today}
+
+\begin{document}
+	\linespread{0.6} %%行间距
+	\setlength{\parskip}{0.3\baselineskip}
+	\begin{center}
+		\LARGE{\textbf{Effectively Solving Linear Ridge Regression}}
+		
+		\small{Student ID：518021911150 \text{} \text{}  \text{} \text{} Class：F1803405 \text{} \text{} \text{} \text{} Name：周睿文}
+	\end{center}
+	\section*{Problem:}
+	\begin{itemize}
+		\item Numerical computation of matrix inversion of $Z^T Z$ is expensive
+		\item Instead we could use singular value decomposition (SVD) to lower the computation cost:
+		\[ Z = UDV^T \]
+		where:
+		\begin{itemize}
+			\item $U = (u_1, u_2, \cdots, u_p)$ is an $n\times p$ orthogonal matrix
+			\item $D = \text{diag}(d_1, d_2, \cdots, d_p)$ is a $p\times p$ diagonal matrix \\
+			consisting of the singular values $d_1 \geq d_2 \geq \cdots \geq d_p \geq 0$
+			\item $V^T = (v_1^T, v_2^T, \cdots, v_p^T)$ is a $p\times p$ orthogonal matrix
+		\end{itemize}
+		\item Proof:
+		\begin{align*}
+		\hat{\beta}_\lambda^{\text{ridge}} &= \left(Z^T Z + \lambda I_p\right)^{-1}Z^T y \\
+		&= V \mathop{\text{diag}}\limits_j\left(\frac{d_j}{d_j^2 + \lambda}\right)U^T y
+		\end{align*}
+	\end{itemize}
+	
+	\section*{Proof:}
+	From the objective of linear ridge regression, we have:
+	\begin{align*}
+		J\left(\beta\right) &= \left(y-Z\beta\right)^T\left(y-Z\beta\right) + \lambda \beta^T\beta
+	\end{align*}
+	To minimize the cost function $J\left(\beta\right)$, we need:
+	\begin{align*}
+		\frac{\partial J}{\partial \beta} &= -2Z^T\left(y-Z\beta\right) + 2\lambda\beta = 0
+	\end{align*}
+	Hence we get:
+	\begin{align*}
+		Z^T y &= Z^T Z\beta + \lambda\beta \\
+		\beta &= \left(Z^T Z + \lambda I_p\right)^{-1}Z^T y
+	\end{align*}
+	As will be shown later, the $p \times p$ matrix $\left(Z^T Z + \lambda I_p\right)$ is invertible as long as $\lambda > 0$.
+	
+	According to the definition of singular value decomposition, we let $Z = UDV^T$, where:
+	\begin{itemize}
+		\item $U = (u_1, u_2, \cdots, u_p)$ is an $n\times p$ orthogonal matrix
+		\item $D = \text{diag}(d_1, d_2, \cdots, d_p)$ is a $p\times p$ diagonal matrix \\
+		consisting of the singular values $d_1 \geq d_2 \geq \cdots \geq d_p \geq 0$
+		\item $V^T = (v_1^T, v_2^T, \cdots, v_p^T)$ is a $p\times p$ orthogonal matrix
+	\end{itemize}
+	
+	Therefore, we obtain:
+	\begin{align*}
+		Z^T Z &= \left(UDV^T\right)^T\left(UDV^T\right) \\
+		&= VD^T U^T UDV^T \\
+		&= VD^T DV^T \\
+		&= VD^2 V^T
+	\end{align*}
+	
+	As $V$ is an orthogonal matrix, we have $V^T V = I_p$, so we can get:
+	\begin{align*}
+		Z^T Z + \lambda I_p &= VD^2 V^T + \lambda I_p \\
+		&= V\left(D^2 + \lambda I_p\right)V^T \\
+		&= V \mathop{\text{diag}}\limits_j\left(d_j^2 + \lambda\right) V^T
+	\end{align*}
+	
+	As long as $\lambda > 0$, we have $d_j^2 + \lambda > 0, \forall j\in\lbrace 0, 1, \cdots,p\rbrace$, so we can get $\left(Z^T Z + \lambda I_p\right)^{-1}$ as following:
+	\begin{align*}
+		V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)V^T \left(Z^T Z + \lambda I_p\right) &= 
+		V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)V^T V \mathop{\text{diag}}\limits_j\left(d_j^2 + \lambda\right) V^T \\
+		&= V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)\mathop{\text{diag}}\limits_j\left(d_j^2 + \lambda\right) V^T \\
+		&= V V^T = I_p \\
+		\Longrightarrow \left(Z^T Z + \lambda I_p\right)^{-1} &=
+		V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)V^T
+	\end{align*}
+	
+	Therefore, we reach the final result:
+	\begin{align*}
+		\beta &= \left(Z^T Z + \lambda I_p\right)^{-1}Z^T y \\
+		&= V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)V^T \left(VD^T U^T\right) y \\
+		&= V\mathop{\text{diag}}\limits_j\left(\frac{1}{d_j^2 + \lambda}\right)\mathop{\text{diag}}\limits_j\left(d_j\right) U^T y \\
+		&= V \mathop{\text{diag}}\limits_j\left(\frac{d_j}{d_j^2 + \lambda}\right)U^T y
+	\end{align*}
+	\begin{flushright}
+	$\blacksquare$
+	\end{flushright}
+\end{document}
